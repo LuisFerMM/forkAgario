@@ -40,7 +40,7 @@ public class Server extends Application {
 	private ServerSocket gameSocket;
 	private ServerSocket chatSocket;
 	private ServerSocket webSocket;
-	
+
 	public void startSSL() {
 
 		System.setProperty("javax.net.ssl.trustStore", "agar.io/src/main/resources/server/serverTrustedCerts.jks");
@@ -101,7 +101,7 @@ public class Server extends Application {
 
 	private void startChatConnection() {
 		Thread chatWaiter = new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
@@ -117,7 +117,7 @@ public class Server extends Application {
 				} catch (IOException e) {
 					System.out.println("Se cierra el chat para clientes");
 				}
-				
+
 			}
 		});
 		chatWaiter.start();
@@ -161,8 +161,8 @@ public class Server extends Application {
 		String[] players = match.getPlayersFromGame();
 		for (int i = 0; i < players.length; i++) {
 			sb.append(players[i] + " ");
-			String[]player = players[i].split(",");
-			if(player[5].equals("T"))
+			String[] player = players[i].split(",");
+			if (player[5].equals("T"))
 				contPlayersAlive++;
 		}
 		sb.append("/");
@@ -215,7 +215,7 @@ public class Server extends Application {
 			gameSocket.close();
 			logSocket.close();
 			chatSocket.close();
-			//***
+			// ***
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -237,7 +237,7 @@ public class Server extends Application {
 
 	public static void sendToChat(String clientText) {
 		for (ChatService chat : chatConnections.values()) {
-			chat.sendToClient(clientText);			
+			chat.sendToClient(clientText);
 		}
 	}
 
@@ -261,21 +261,33 @@ public class Server extends Application {
 	}
 
 	public String requestDB(String cedula) {
-			String datosObtenidos = "";
-			try {
-				Socket socket = new Socket("localhost", Port.DB.getPort());
-				DataInputStream in = new DataInputStream(socket.getInputStream());
-				DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-				String mensaje = "PEDIR_DATOS;" + cedula;
-				System.out.println("Chequeo Method pedir Datos Al Server BD");	
-				out.writeUTF(mensaje);
-				String mensajeObtenido = in.readUTF();
-				datosObtenidos = mensajeObtenido;
-				System.out.println("Mensaje Obtenido por el Servidor BD al PEDIR DATOS : " + mensajeObtenido);
-				socket.close();	
-			} catch (IOException e) {
-				System.out.println("Exception in ConexServerBD");
-			}	
-			return datosObtenidos;
+		String datosObtenidos = "";
+		try {
+			Socket socket = new Socket("localhost", Port.DB.getPort());
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			String mensaje = "PEDIR_DATOS;" + cedula;
+			System.out.println("Chequeo Method pedir Datos Al Server BD");
+			out.writeUTF(mensaje);
+			String mensajeObtenido = in.readUTF();
+			datosObtenidos = mensajeObtenido;
+			System.out.println("Mensaje Obtenido por el Servidor BD al PEDIR DATOS : " + mensajeObtenido);
+			socket.close();
+		} catch (IOException e) {
+			System.out.println("Exception in ConexServerBD");
+		}
+		return datosObtenidos;
+	}
+
+	public boolean validateUser(String email, String password) {
+		String todo = requestDB(email);
+		boolean foundSomething = false;
+		String[] cotsas = todo.split("\n");
+		for (int j = 0; j < cotsas.length && !foundSomething; j++) {
+			String[]line = cotsas[j].split(",");
+			if((line[6].equals(email) || line[0].equals(email))&&line[1].equals(password))
+				foundSomething = true;
+		}
+		return foundSomething;
 	}
 }
