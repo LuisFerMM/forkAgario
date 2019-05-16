@@ -6,7 +6,8 @@ public enum ServerMessage {
 	REGISTER_SUCCESS("User created successfully."),
 	WAITING_MATCH("¡Wait for your friends!"),
 	JOIN_SPECTATOR("Joining as spectator"),
-	STARTING_MATCH("Starting match. 3, 2, 1...");
+	STARTING_MATCH("Starting match. 3, 2, 1..."),
+	GAME_OVER("Game over");
 	
 	private String message;
 	

@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.net.ServerSocketFactory;
@@ -15,6 +16,8 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+
+import com.sun.glass.ui.GestureSupport;
 
 import game.Match;
 import javafx.application.Application;
@@ -63,7 +66,7 @@ public class Server extends Application {
 						clientListener.start();
 					}
 				} catch (IOException e) {
-//					e.printStackTrace();
+					// e.printStackTrace();
 					System.out.println("Se cierra el login para Clientes");
 				}
 
@@ -86,7 +89,7 @@ public class Server extends Application {
 			}
 		} catch (IOException e) {
 			System.out.println("Tiempo agotado");
-//				e.printStackTrace();
+			// e.printStackTrace();
 		}
 		if (playerC.clientsCount() >= 1) {
 			TransmitionAudio ta = new TransmitionAudio();
@@ -175,6 +178,7 @@ public class Server extends Application {
 		for (int i = 0; i < scores.length; i++) {
 			sb.append(scores[i] + " ");
 		}
+		sb.append("/"+match.isInGame());
 		return sb.toString();
 	}
 
@@ -215,9 +219,53 @@ public class Server extends Application {
 			gameSocket.close();
 			logSocket.close();
 			chatSocket.close();
-			// ***
+			match.setInGame(false);
+			saveScores();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void saveScores() {
+
+		try {
+			Socket socket = new Socket("localhost", Port.DB.getPort());
+			DataInputStream in = new DataInputStream(socket.getInputStream());
+			DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+			String mensaje = "GUARDAR;";
+			System.out.println("Chequeo Method Establecer Conex con Server BD");
+			String[] players = match.getPlayersFromGame();
+			String[] scores = match.getScores();
+			for (int i = 0; i < players.length; i++) {
+				String[] player = players[i].split(",");
+				mensaje += player[4]+",";
+				User that = null;
+				for (User u : users.values()) {
+					if(u.getNickname().equals(player[4])) {
+						mensaje += u.getPassword();
+						that = u;
+						break;
+					}
+				}
+				if(player[5].equals("T"))
+					mensaje+= ",Yes,";
+				else
+					mensaje+= ",No,";
+				mensaje += new Date().toString() + ",";
+				mensaje += scores[i].split(",")[1] + ",";
+				for (int j = 0; j < players.length; j++) {
+					if(i!=j)
+						mensaje += players[j].split(",")[4] + " ";
+				}
+				mensaje += ","+ that.getEmail();
+			}
+			out.writeUTF(mensaje);
+			String mensajeObtenido = in.readUTF();
+			System.out.println("Mensaje Obtenido por el Servidor BD al GUARDAR : " + mensajeObtenido);
+			socket.close();
+
+		} catch (IOException e) {
+			System.out.println("Exception in ConexServerBD");
 		}
 	}
 
@@ -284,8 +332,8 @@ public class Server extends Application {
 		boolean foundSomething = false;
 		String[] cotsas = todo.split("\n");
 		for (int j = 0; j < cotsas.length && !foundSomething; j++) {
-			String[]line = cotsas[j].split(",");
-			if((line[6].equals(email) || line[0].equals(email))&&line[1].equals(password))
+			String[] line = cotsas[j].split(",");
+			if ((line[6].equals(email) || line[0].equals(email)) && line[1].equals(password))
 				foundSomething = true;
 		}
 		return foundSomething;

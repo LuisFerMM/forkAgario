@@ -26,8 +26,10 @@ public class HiloAtencionServidores extends Thread {
 				String mensaje = in.readUTF();
 				String[] componentes = mensaje.split(";");
 				if (componentes[0].compareToIgnoreCase("GUARDAR")==0) {
+					if(componentes.length>1) {
 					server.guardarEnBaseDeDatos(componentes[1]);
 					out.writeUTF("GUARDADO");
+					}
 				}
 				else {
 					server.retornarInfoBD(out);

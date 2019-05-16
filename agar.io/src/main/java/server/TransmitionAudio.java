@@ -26,7 +26,7 @@ public class TransmitionAudio extends Thread{
 	*/
 	private static void broadcastAudio() {
 		try {
-			File soundFile = new File("src/main/resources/server/audio.wav");
+			File soundFile = new File("agar.io/src/main/resources/server/audio.wav");
 			FileInputStream in = new FileInputStream(soundFile);
 			
 			MulticastSocket socket = new MulticastSocket();

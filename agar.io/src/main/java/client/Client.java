@@ -26,7 +26,7 @@ public class Client extends Application {
 	public static final int READY = 1;
 	public static final int PLAYING = 2;
 	public static final int WATCHING = 3;
-	public static final String HOST = "Despair";
+	public static final String HOST = "localhost";
 	
 	public static PrintWriter writerGame;
 	public static PrintWriter writerChat;
@@ -93,9 +93,9 @@ public class Client extends Application {
 
 	public void connectToServer() {
 		final SSLSocket client;
-		System.setProperty("javax.net.ssl.trustStore", "src/main/resources/client/clientTrustedCerts.jks");
+		System.setProperty("javax.net.ssl.trustStore", "agar.io/src/main/resources/client/clientTrustedCerts.jks");
 		System.setProperty("javax.net.ssl.trustStorePassword", "123456");
-		System.setProperty("javax.net.ssl.keyStore", "src/main/resources/client/clientkey.jks");
+		System.setProperty("javax.net.ssl.keyStore", "agar.io/src/main/resources/client/clientkey.jks");
 		System.setProperty("javax.net.ssl.keyStorePassword", "123456");
 		SSLSocketFactory sf = (SSLSocketFactory) SSLSocketFactory.getDefault();
 
@@ -312,6 +312,13 @@ public class Client extends Application {
 		enemies = arreglos[0].split(" ");
 		food = arreglos[1].split(" ");
 		scores = arreglos[2].split(" ");
+		String statusGame = arreglos[3];
+		if(statusGame.equals("false")) {
+			if(sessionStatus != OFFLINE) {				
+			sessionStatus = OFFLINE;
+			logInC.endGame();
+			}
+		}
 		if (player == null)
 			player = enemies[posPlayer];
 		else {

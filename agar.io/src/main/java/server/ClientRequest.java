@@ -62,6 +62,12 @@ public class ClientRequest extends Thread {
 						StringBuilder responseBuffer = new StringBuilder();
 						responseBuffer.append("<html>").append("<head>").append("<style>").append("body{").append(
 								"	background-image: url(\"http://img01.deviantart.net/4b24/i/2015/160/3/2/agar_io_by_alexia_way-d8wo9zt.jpg\");")
+						.append("table td:hover{").append("background: #000; color:white;}")
+						.append("table tr:hover{ background: #ccc;}"
+								+ "table {width: 100%; border-collapse: collapse;}")
+						.append("th, td {border: 1px solid #000;"
+								+ "background: #eee; text-align: center;"
+								+ "vertical-align: center;}")
 								.append("}").append("</style>")
 								.append("<title>Informacion Nickname Correspondiente</title>").append("</head>")
 								.append("<body>").append("<h1>Partidas jugadas</h1>").append("<table>").append("<tr>")
@@ -69,7 +75,7 @@ public class ClientRequest extends Thread {
 								.append("<td><strong>You won?</strong></td>").append("<td><strong>Date</strong></td>")
 								.append("<td><strong>Score</strong></td>").append("<td><strong>Enemies</strong></td>");
 						agregarlista(lista, responseBuffer, user);
-						responseBuffer.append("<body>").append("<table>").append("<body>").append("</html>");
+						responseBuffer.append("</table>").append("</body>").append("</html>");
 
 						sendResponse(socket, 200, responseBuffer.toString());
 					} else {
@@ -81,9 +87,12 @@ public class ClientRequest extends Thread {
 				sendResponse(socket, 405, "Method Not Allowed");
 			}
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		}catch(
+
+	IOException e)
+	{
+		e.printStackTrace();
+	}
 
 	}
 
@@ -91,7 +100,8 @@ public class ClientRequest extends Thread {
 		parameter = parameter.split("&")[0];
 		for (int i = 0; i < lista.length; i++) {
 			System.out.println("Busca en DB :" + lista[i]);
-			if (lista[i].split(",")[0].compareToIgnoreCase(parameter) == 0 || lista[i].split(",")[6].compareToIgnoreCase(parameter) == 0) {
+			if (lista[i].split(",")[0].compareToIgnoreCase(parameter) == 0
+					|| lista[i].split(",")[6].compareToIgnoreCase(parameter) == 0) {
 				responseBuffer.append("<tr>");
 				responseBuffer.append("<td>" + lista[i].split(",")[0] + "</td>");
 				responseBuffer.append("<td>" + lista[i].split(",")[2] + "</td>");
@@ -125,15 +135,15 @@ public class ClientRequest extends Thread {
 				statusLine = "HTTP/1.0 405 Method Not Allowed" + "\r\n";
 				out.writeBytes(statusLine);
 				out.writeBytes("\r\n");
-			} else if(statusCode == 400) {
+			} else if (statusCode == 400) {
 				statusLine = "HTTP/1.0 400 Wrong email or password" + "\r\n";
 				out.writeBytes(statusLine);
 				out.writeBytes("\r\n");
-			}else{
+			} else {
 				statusLine = "HTTP/1.0 404 Not Found" + "\r\n";
 				out.writeBytes(statusLine);
 				out.writeBytes("\r\n");
-			} 
+			}
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();

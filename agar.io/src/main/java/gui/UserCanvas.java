@@ -71,7 +71,6 @@ public class UserCanvas extends BorderPane {
    	            	  user.sendToChat(writerChat.getText());
    	            	  writerChat.clear();
    	              }
-   	              System.out.println("lee esta mierda");
         	}
 		});
         contWriter.getChildren().add(writerChat);

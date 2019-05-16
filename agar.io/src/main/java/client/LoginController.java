@@ -119,4 +119,8 @@ public class LoginController {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+
+	public void endGame() {
+		JOptionPane.showMessageDialog(new JFrame(), ServerMessage.GAME_OVER,"Match Finished",JOptionPane.INFORMATION_MESSAGE);
+	}
 }
